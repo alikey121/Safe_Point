@@ -15,7 +15,7 @@ local dropdownButtons = {}
 -- COLORES ESTILO JS-LIKE (DARK)
 local COLOR_BG = Color3.fromRGB(12, 12, 12)
 local COLOR_ACCENT = Color3.fromRGB(230, 0, 0)
-local COLOR_BUTTON_DROP = Color3.fromRGB(18, 18, 18) -- Un toque más claro para distinción
+local COLOR_BUTTON_DROP = Color3.fromRGB(18, 18, 18)
 local COLOR_TEXT = Color3.fromRGB(255, 255, 255)
 
 ---------------------------------------------------------
@@ -40,8 +40,10 @@ end
 loadFromStorage()
 
 -- INTERFAZ
-local screenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TpMenuGui"
+screenGui.ResetOnSpawn = false -- CORRECCIÓN: Evita que el menú se borre al morir
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local menuFrame = Instance.new("Frame", screenGui)
 menuFrame.Name = "TpMenuFrame"
@@ -124,7 +126,7 @@ local dropdownMain = createStyledButton(UDim2.new(0, 12, 0, 72), UDim2.new(0, 75
 local tpButton = createStyledButton(UDim2.new(0, 12, 0, 116), UDim2.new(0, 75, 0, 40), "Tepear")
 local saveButton = createStyledButton(UDim2.new(0, 93, 0, 72), UDim2.new(0, 85, 0, 40), "Guardar")
 
--- DROPDOWN DERECHA (DISEÑO RENOVADO)
+-- DROPDOWN DERECHA
 local dropdownListFrame = Instance.new("ScrollingFrame", menuFrame)
 dropdownListFrame.Name = "DropdownFrame"
 dropdownListFrame.Size = UDim2.new(0, 0, 0, 160)
@@ -137,27 +139,26 @@ dropdownListFrame.ClipsDescendants = true
 Instance.new("UICorner", dropdownListFrame).CornerRadius = UDim.new(0, 6)
 Instance.new("UIStroke", dropdownListFrame, {Color = COLOR_ACCENT, Thickness = 2})
 local listLayout = Instance.new("UIListLayout", dropdownListFrame)
-listLayout.Padding = UDim.new(0, 0) -- Eliminado espacio entre elementos
+listLayout.Padding = UDim.new(0, 0)
 
 local function refreshDropdown()
     for _, btn in ipairs(dropdownButtons) do btn:Destroy() end
     dropdownButtons = {}
     for posName, _ in pairs(savedPositions) do
         local item = Instance.new("TextButton")
-        item.Size = UDim2.new(1, 0, 0, 28) -- Ligeramente más alto para mejor tacto
+        item.Size = UDim2.new(1, 0, 0, 28)
         item.BackgroundColor3 = COLOR_BUTTON_DROP
-        item.AutoButtonColor = false -- Evita el flash azul por defecto de Roblox
+        item.AutoButtonColor = false
         item.Text = posName
         item.TextColor3 = COLOR_TEXT
         item.Font = Enum.Font.Gotham
         item.TextSize = 12
         item.BorderSizePixel = 0
         item.Parent = dropdownListFrame
-        
-        -- Efecto hover simple (opcional)
+
         item.MouseEnter:Connect(function() item.BackgroundColor3 = Color3.fromRGB(30, 30, 30) end)
         item.MouseLeave:Connect(function() item.BackgroundColor3 = COLOR_BUTTON_DROP end)
-        
+
         item.MouseButton1Click:Connect(function() 
             textBox.Text = posName
         end)
